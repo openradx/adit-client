@@ -8,7 +8,7 @@ readme = "README.md"
 packages = [{ include = "adit_client" }]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = ">=3.11,<4.0"
 dicomweb-client = "^0.59.1"
 pydicom = "^2.4.3"
 
