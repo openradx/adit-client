@@ -53,7 +53,7 @@ class AditClient:
 
     def _create_dicom_web_client(self, ae_title: str) -> DICOMwebClient:
         return DICOMwebClient(
-            url=f"{self.server_url}/dicom-web/{ae_title}",
+            url=f"{self.server_url}/api/dicom-web/{ae_title}",
             qido_url_prefix="qidors",
             wado_url_prefix="wadors",
             stow_url_prefix="stowrs",
