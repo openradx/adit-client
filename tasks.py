@@ -1,5 +1,7 @@
+import sys
 from pathlib import Path
 from shutil import copy
+from typing import Literal
 
 from invoke.context import Context
 from invoke.runners import Result
@@ -35,11 +37,27 @@ def lint(ctx: Context):
 
 
 @task
+def bump_version(ctx: Context, rule: Literal["patch", "minor", "major"]):
+    """Bump version, create a tag, commit and push to GitHub"""
+    result = ctx.run("git status --porcelain", hide=True, pty=True)
+    assert result and result.ok
+    if result.stdout.strip():
+        print("There are uncommitted changes. Aborting.")
+        sys.exit(1)
+
+    ctx.run(f"poetry version {rule}", pty=True)
+    ctx.run("git add pyproject.toml", pty=True)
+    ctx.run("git commit -m 'Bump version'", pty=True)
+    ctx.run("git tag -a $(poetry version -s) -m 'Release $(poetry version -s)'", pty=True)
+    ctx.run("git push --follow-tags", pty=True)
+
+
+@task
 def publish_client(ctx: Context):
     """Publish ADIT Client to PyPI
 
+    - Make sure to bump the version first (see `bump_version` above)
     - Make sure PyPI API token is set: poetry config pypi-token.pypi your-api-token
-    - Set version in adit_client/pyproject.toml
     - Execute with `invoke publish-client`
     """
     run_cmd(ctx, "poetry publish --build")
