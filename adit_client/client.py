@@ -1,3 +1,5 @@
+from typing import Iterator
+
 from dicomweb_client import DICOMwebClient, session_utils
 from pydicom import Dataset
 
@@ -11,25 +13,26 @@ class AditClient:
     def search_for_studies(
         self, ae_title: str, query: dict[str, str] | None = None
     ) -> list[Dataset]:
-        """Query an ADIT server for studies."""
+        """Search for studies."""
         results = self._create_dicom_web_client(ae_title).search_for_studies(search_filters=query)
         return [Dataset.from_json(result) for result in results]
 
     def search_for_series(
         self, ae_title: str, study_instance_uid: str, query: dict[str, str] | None = None
     ) -> list[Dataset]:
-        """Query an ADIT server for series."""
+        """Search for series."""
         results = self._create_dicom_web_client(ae_title).search_for_series(
             study_instance_uid, search_filters=query
         )
         return [Dataset.from_json(result) for result in results]
 
     def retrieve_study(self, ae_title: str, study_instance_uid: str) -> list[Dataset]:
-        """Retrieve a study from an ADIT server."""
-        if not study_instance_uid:
-            raise ValueError("Study instance UID must be provided to retrieve study.")
-
+        """Retrieve all instances of a study."""
         return self._create_dicom_web_client(ae_title).retrieve_study(study_instance_uid)
+
+    def iter_study(self, ae_title: str, study_instance_uid: str) -> Iterator[Dataset]:
+        """Iterate over all instances of a study."""
+        return self._create_dicom_web_client(ae_title).iter_study(study_instance_uid)
 
     def retrieve_series(
         self,
@@ -37,20 +40,25 @@ class AditClient:
         study_instance_uid: str,
         series_instance_uid: str,
     ) -> list[Dataset]:
-        """Retrieve a series from an ADIT server."""
-        if not study_instance_uid:
-            raise ValueError("Study instance UID must be provided to retrieve series.")
-
-        if not series_instance_uid:
-            raise ValueError("Series instance UID must be provided to retrieve series.")
-
+        """Retrieve all instances of a series."""
         return self._create_dicom_web_client(ae_title).retrieve_series(
             study_instance_uid, series_instance_uid=series_instance_uid
         )
 
-    def store_instances(self, ae_title: str, instances: list[Dataset]) -> None:
-        """Store some instances on an ADIT server."""
-        self._create_dicom_web_client(ae_title).store_instances(instances)
+    def iter_series(
+        self,
+        ae_title: str,
+        study_instance_uid: str,
+        series_instance_uid: str,
+    ) -> Iterator[Dataset]:
+        """Iterate over all instances of a series."""
+        return self._create_dicom_web_client(ae_title).iter_series(
+            study_instance_uid, series_instance_uid=series_instance_uid
+        )
+
+    def store_instances(self, ae_title: str, instances: list[Dataset]) -> Dataset:
+        """Store instances."""
+        return self._create_dicom_web_client(ae_title).store_instances(instances)
 
     def _create_dicom_web_client(self, ae_title: str) -> DICOMwebClient:
         session = session_utils.create_session()
