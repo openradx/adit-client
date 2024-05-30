@@ -1,14 +1,43 @@
 from typing import Iterator
 
+from dicognito.anonymizer import Anonymizer
+from dicognito.value_keeper import ValueKeeper
 from dicomweb_client import DICOMwebClient, session_utils
 from pydicom import Dataset
 
+DEFAULT_SKIP_ELEMENTS_ANONYMIZATION = [
+    "AcquisitionDate",
+    "AcquisitionDateTime",
+    "AcquisitionTime",
+    "ContentDate",
+    "ContentTime",
+    "SeriesDate",
+    "SeriesTime",
+    "StudyDate",
+    "StudyTime",
+]
+
 
 class AditClient:
-    def __init__(self, server_url: str, auth_token: str, verify: str | bool = True) -> None:
+    def __init__(
+        self,
+        server_url: str,
+        auth_token: str,
+        verify: str | bool = True,
+        trial_protocol_id: str | None = None,
+        trial_protocol_name: str | None = None,
+        skip_elements_anonymization: list[str] | None = None,
+    ) -> None:
         self.server_url = server_url
         self.auth_token = auth_token
         self.verify = verify
+        self.trial_protocol_id = trial_protocol_id
+        self.trial_protocol_name = trial_protocol_name
+
+        if skip_elements_anonymization is None:
+            self.skip_elements_anonymization = DEFAULT_SKIP_ELEMENTS_ANONYMIZATION
+        else:
+            self.skip_elements_anonymization = skip_elements_anonymization
 
     def search_for_studies(
         self, ae_title: str, query: dict[str, str] | None = None
@@ -26,35 +55,67 @@ class AditClient:
         )
         return [Dataset.from_json(result) for result in results]
 
-    def retrieve_study(self, ae_title: str, study_instance_uid: str) -> list[Dataset]:
+    def retrieve_study(
+        self, ae_title: str, study_instance_uid: str, pseudonym: str | None = None
+    ) -> list[Dataset]:
         """Retrieve all instances of a study."""
-        return self._create_dicom_web_client(ae_title).retrieve_study(study_instance_uid)
+        instances = self._create_dicom_web_client(ae_title).retrieve_study(study_instance_uid)
 
-    def iter_study(self, ae_title: str, study_instance_uid: str) -> Iterator[Dataset]:
+        anonymizer: Anonymizer | None = None
+        if pseudonym is not None:
+            anonymizer = self._setup_anonymizer()
+
+        return [self._handle_dataset(instance, anonymizer, pseudonym) for instance in instances]
+
+    def iter_study(
+        self, ae_title: str, study_instance_uid: str, pseudonym: str | None = None
+    ) -> Iterator[Dataset]:
         """Iterate over all instances of a study."""
-        return self._create_dicom_web_client(ae_title).iter_study(study_instance_uid)
+        instances = self._create_dicom_web_client(ae_title).iter_study(study_instance_uid)
+
+        anonymizer: Anonymizer | None = None
+        if pseudonym is not None:
+            anonymizer = self._setup_anonymizer()
+
+        for instance in instances:
+            yield self._handle_dataset(instance, anonymizer, pseudonym)
 
     def retrieve_series(
         self,
         ae_title: str,
         study_instance_uid: str,
         series_instance_uid: str,
+        pseudonym: str | None = None,
     ) -> list[Dataset]:
         """Retrieve all instances of a series."""
-        return self._create_dicom_web_client(ae_title).retrieve_series(
+        instances = self._create_dicom_web_client(ae_title).retrieve_series(
             study_instance_uid, series_instance_uid=series_instance_uid
         )
+
+        anonymizer: Anonymizer | None = None
+        if pseudonym is not None:
+            anonymizer = self._setup_anonymizer()
+
+        return [self._handle_dataset(instance, anonymizer, pseudonym) for instance in instances]
 
     def iter_series(
         self,
         ae_title: str,
         study_instance_uid: str,
         series_instance_uid: str,
+        pseudonym: str | None = None,
     ) -> Iterator[Dataset]:
         """Iterate over all instances of a series."""
-        return self._create_dicom_web_client(ae_title).iter_series(
+        instances = self._create_dicom_web_client(ae_title).iter_series(
             study_instance_uid, series_instance_uid=series_instance_uid
         )
+
+        anonymizer: Anonymizer | None = None
+        if pseudonym is not None:
+            anonymizer = self._setup_anonymizer()
+
+        for instance in instances:
+            yield self._handle_dataset(instance, anonymizer, pseudonym)
 
     def store_instances(self, ae_title: str, instances: list[Dataset]) -> Dataset:
         """Store instances."""
@@ -76,3 +137,35 @@ class AditClient:
             stow_url_prefix="stowrs",
             headers={"Authorization": f"Token {self.auth_token}"},
         )
+
+    def _setup_anonymizer(self) -> Anonymizer:
+        anonymizer = Anonymizer()
+        for element in self.skip_elements_anonymization:
+            anonymizer.add_element_handler(ValueKeeper(element))
+        return anonymizer
+
+    def _handle_dataset(
+        self, ds: Dataset, anonymizer: Anonymizer | None, pseudonym: str | None
+    ) -> Dataset:
+        # Similar to what ADIT does in core/processors.py
+
+        if self.trial_protocol_id is not None:
+            ds.ClinicalTrialProtocolID = self.trial_protocol_id
+
+        if self.trial_protocol_name is not None:
+            ds.ClinicalTrialProtocolName = self.trial_protocol_name
+
+        if pseudonym is not None:
+            assert anonymizer is not None
+            anonymizer.anonymize(ds)
+            ds.PatientID = pseudonym
+            ds.PatientName = pseudonym
+
+        if pseudonym and self.trial_protocol_id:
+            session_id = f"{ds.StudyDate}-{ds.StudyTime}"
+            ds.PatientComments = (
+                f"Project:{self.trial_protocol_id} Subject:{pseudonym} "
+                f"Session:{pseudonym}_{session_id}"
+            )
+
+        return ds

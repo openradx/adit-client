@@ -11,6 +11,7 @@ packages = [{ include = "adit_client" }]
 dicomweb-client = "^0.59.1"
 pydicom = "^2.4.3"
 python = ">=3.11,<4.0"
+dicognito = "^0.17.0"
 
 [tool.poetry.group.dev.dependencies]
 adit = { git = "https://github.com/openradx/adit.git" }
