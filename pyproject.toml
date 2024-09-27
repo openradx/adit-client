@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "adit-client"
-version = "0.5.0"
+version = "0.0.0"
 description = "ADIT Client library to connect to an ADIT server."
 authors = ["Kai Schlamp <kai.schlamp@gmail.com>"]
 license = "GPL-3.0-or-later"
@@ -58,6 +58,10 @@ filterwarnings = [
     "ignore:.*No directory at.*staticfiles.*:UserWarning",
 ]
 
+[tool.poetry-dynamic-versioning]
+enable = true
+pattern = '(?P<base>\d+(\.\d+)*)([-._]?((?P<stage>[a-zA-Z]+)[-._]?(?P<revision>\d+)?))?$'
+
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
