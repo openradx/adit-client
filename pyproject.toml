@@ -8,13 +8,15 @@ readme = "README.md"
 packages = [{ include = "adit_client" }]
 
 [tool.poetry.dependencies]
+python = ">=3.11,<4.0"
+
+dicognito = "^0.17.0"
 dicomweb-client = "^0.59.1"
 pydicom = "^2.4.3"
-python = ">=3.11,<4.0"
-dicognito = "^0.17.0"
 
 [tool.poetry.group.dev.dependencies]
-adit = { git = "https://github.com/openradx/adit.git" }
+adit = { git = "https://github.com/openradx/adit.git", rev = "v0.34.0", python = ">=3.12,<4.0" }
+adit-radis-shared = { git = "https://github.com/openradx/adit-radis-shared.git", rev = "v0.6.8", python = ">=3.12,<4.0" }
 invoke = "^2.2.0"
 ipykernel = "^6.29.0"
 ipython = "^8.21.0"
