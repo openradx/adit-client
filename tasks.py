@@ -1,7 +1,7 @@
 from pathlib import Path
 from shutil import copy
 
-from adit_radis_shared.invoke_tasks import bump_version, lint, show_outdated  # noqa: F401
+from adit_radis_shared.invoke_tasks import show_outdated  # noqa: F401
 from invoke.context import Context
 from invoke.runners import Result
 from invoke.tasks import task
@@ -24,6 +24,16 @@ def run_cmd(ctx: Context, cmd: str, silent=False) -> Result:
 def init_workspace(ctx: Context):
     """Initialize workspace"""
     copy(f"{project_dir}/example.env", f"{project_dir}/.env")
+
+
+@task
+def lint(ctx: Context):
+    """Lint the source code (ruff, djlint, pyright)"""
+    print("Linting Python code with ruff...")
+    ctx.run("poetry run ruff check .", pty=True)
+
+    print("Linting Python code with pyright...")
+    ctx.run("poetry run pyright", pty=True)
 
 
 @task
