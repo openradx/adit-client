@@ -18,7 +18,7 @@ channels = "^4.0.0"
 crispy-bootstrap5 = "^2024.2"
 cryptography = "^43.0.0"
 daphne = "^4.0.0"
-dicognito = "^0.17.0"
+dicognito = "0.17.0"
 dicomweb-client = "^0.59.1"
 Django = "^5.0.4"
 django-crispy-forms = "^2.0"
@@ -52,8 +52,8 @@ whitenoise = "^6.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/openradx/adit.git"
-reference = "HEAD"
-resolved_reference = "7ab36d8d64ecc109d1379a6f5667d83b015650f3"
+reference = "0.35.0"
+resolved_reference = "ccf73a2e7003237153b8cf48358084e0baf4eb8a"
 
 [[package]]
 name = "adit-radis-shared"
@@ -2830,4 +2830,4 @@ testing = ["coverage (>=5.0.3)", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "467fad1c3ff808f35582d208ca741490f34d1b4db253f6f6bda2af6a36f477a3"
+content-hash = "398c7befea065f162b0508fd2d068782513539d377f5826a1d9111be740bb545"
