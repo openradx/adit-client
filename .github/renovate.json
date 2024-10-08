@@ -6,12 +6,12 @@
     {
       "managers": ["docker-compose"],
       "matchPackageNames": ["postgres"],
-      "allowedVersions": "<=16.0"
+      "allowedVersions": "<=16"
     },
     {
       "matchManagers": ["poetry"],
       "matchPackageNames": ["dicognito"],
-      "allowedVersions": "<=0.17.0"
+      "allowedVersions": "<=0.17"
     },
     {
       "matchManagers": ["poetry"],
