@@ -26,3 +26,7 @@ studies = client.search_for_studies("ORTHANC1", {"PatientName": "Doe, John"})
 # The client returns pydicom datasets.
 study_descriptions = [study.StudyDescription for study in studies]
 ```
+
+## License
+
+- AGPL 3.0 or later
