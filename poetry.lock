@@ -10,7 +10,7 @@ files = []
 develop = false
 
 [package.dependencies]
-adit-radis-shared = {git = "https://github.com/openradx/adit-radis-shared.git", rev = "0.8.0"}
+adit-radis-shared = {git = "https://github.com/openradx/adit-radis-shared.git", tag = "0.8.0"}
 adrf = "^0.1.1"
 aiofiles = "^24.1.0"
 asyncinotify = "^4.0.1"
@@ -52,8 +52,8 @@ whitenoise = "^6.0.0"
 [package.source]
 type = "git"
 url = "https://github.com/openradx/adit.git"
-reference = "0.35.0"
-resolved_reference = "ccf73a2e7003237153b8cf48358084e0baf4eb8a"
+reference = "0.35.1"
+resolved_reference = "1033c17f5d29645f42ec025ff31d1e9efcba76c9"
 
 [[package]]
 name = "adit-radis-shared"
@@ -2842,4 +2842,4 @@ testing = ["coverage[toml]", "zope.event", "zope.testing"]
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.11,<4.0"
-content-hash = "398c7befea065f162b0508fd2d068782513539d377f5826a1d9111be740bb545"
+content-hash = "fcc9741609c14c6118aba27eca93028744bef2c2c7164f5eece29ef3eb999a2c"
