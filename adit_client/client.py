@@ -1,3 +1,4 @@
+import importlib.metadata
 from typing import Iterator
 
 from dicognito.anonymizer import Anonymizer
@@ -33,6 +34,7 @@ class AditClient:
         self.verify = verify
         self.trial_protocol_id = trial_protocol_id
         self.trial_protocol_name = trial_protocol_name
+        self.__version__ = importlib.metadata.version("adit-client")
 
         if skip_elements_anonymization is None:
             self.skip_elements_anonymization = DEFAULT_SKIP_ELEMENTS_ANONYMIZATION
@@ -135,7 +137,10 @@ class AditClient:
             qido_url_prefix="qidors",
             wado_url_prefix="wadors",
             stow_url_prefix="stowrs",
-            headers={"Authorization": f"Token {self.auth_token}"},
+            headers={
+                "Authorization": f"Token {self.auth_token}",
+                "User-Agent": f"adit-client/{self.__version__}",
+            },
         )
 
     def _setup_anonymizer(self) -> Anonymizer:
