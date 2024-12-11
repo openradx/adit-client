@@ -139,7 +139,7 @@ class AditClient:
             stow_url_prefix="stowrs",
             headers={
                 "Authorization": f"Token {self.auth_token}",
-                "User-Agent": f"adit-client/{self.__version__}",
+                "User-Agent": f"python-adit_client/{self.__version__}",
             },
         )
 
