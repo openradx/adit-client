@@ -14,8 +14,8 @@ pydicom = "^2.4.3"
 python = ">=3.11,<4.0"
 
 [tool.poetry.group.dev.dependencies]
-adit = { git = "https://github.com/openradx/adit.git", tag = "0.35.1", python = ">=3.12,<4.0" }
-adit-radis-shared = { git = "https://github.com/openradx/adit-radis-shared.git", tag = "0.8.0", python = ">=3.12,<4.0" }
+adit = { git = "https://github.com/openradx/adit.git", tag = "0.36.1", python = ">=3.12,<4.0" }
+adit-radis-shared = { git = "https://github.com/openradx/adit-radis-shared.git", tag = "0.9.6", python = ">=3.12,<4.0" }
 invoke = "^2.2.0"
 ipykernel = "^6.29.0"
 ipython = "^8.21.0"
@@ -26,7 +26,7 @@ pytest-django = "^4.8.0"
 pytest-env = "^1.1.3"
 pytest-mock = "^3.14.0"
 python-dotenv = "^1.0.1"
-ruff = "^0.7.0"
+ruff = "^0.8.3"
 
 [tool.ruff]
 target-version = "py312"
@@ -43,11 +43,41 @@ DJANGO_SETTINGS_MODULE = "adit.settings.production"
 python_files = ["tests.py", "test_*.py", "*_tests.py"]
 testpaths = ["tests"]
 env = [
-    "DJANGO_SECRET_KEY=fs)r&^0)roil9xn85+1dnbsepu&es&!d+i5@lepfhc+*v_3=8%",
-    "DJANGO_ALLOWED_HOSTS=localhost",
-    "DJANGO_EMAIL_HOST=localhost",
+    "CALLING_AE_TITLE=ADIT",
     "DATABASE_URL=psql://postgres:postgres@localhost:5432/postgres",
+    "DBBACKUP_STORAGE_LOCATION=/backups",
+    "DJANGO_ADMIN_EMAIL=admin@localhost",
+    "DJANGO_ADMIN_FULL_NAME=ADIT-Admin",
+    "DJANGO_ALLOWED_HOSTS=localhost",
+    "DJANGO_CSRF_TRUSTED_ORIGINS=localhost",
+    "DJANGO_EMAIL_URL=smtp://adit@localhost",
+    "DJANGO_SECRET_KEY=xxxyyyzzz",
+    "DJANGO_SERVER_EMAIL=adit@localhost",
+    "DJANGO_STATIC_ROOT=.",
+    "FILE_TRANSMIT_HOST=receiver.local",
+    "FILE_TRANSMIT_PORT=14638",
+    "ORTHANC1_DICOM_PORT=7501",
+    "ORTHANC1_DICOMWEB_ROOT=dicomweb",
+    "ORTHANC1_HOST=orthanc1.local",
+    "ORTHANC1_HTTP_PORT=6501",
+    "ORTHANC2_DICOM_PORT=7502",
+    "ORTHANC2_DICOMWEB_ROOT=dicomweb",
+    "ORTHANC2_HOST=orthanc2.local",
+    "ORTHANC2_HTTP_PORT=6502",
     "POSTGRES_PASSWORD=postgres",
+    "RECEIVER_AE_TITLE=ADIT",
+    "SITE_DOMAIN=localhost",
+    "SITE_NAME=ADIT",
+    "SITE_USES_HTTPS=false",
+    "STORE_SCP_HOST=receiver.local",
+    "STORE_SCP_PORT=11112",
+    "SUPERUSER_AUTH_TOKEN=xxxyyyzzz",
+    "SUPERUSER_EMAIL=superuser@localhost",
+    "SUPERUSER_USERNAME=superuser",
+    "SUPERUSER_PASSWORD=superuser",
+    "SUPPORT_EMAIL=support@localhost",
+    "TOKEN_AUTHENTICATION_SALT=token-auth-salt",
+    "USER_TIME_ZONE=UTC",
 ]
 log_cli = 0
 log_cli_level = "INFO"
