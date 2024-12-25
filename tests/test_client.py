@@ -1,18 +1,19 @@
 import pytest
 from adit.core.models import DicomServer
+from pytest_django.live_server_helper import LiveServer
 from pytest_mock import MockerFixture
 
 from adit_client.client import AditClient
+from adit_client.utils.testing_helpers import create_admin_with_group_and_token
 
 
 @pytest.mark.django_db
-def test_store_study(live_server, mocker: MockerFixture, admin_with_group_and_token):
+def test_store_study(live_server: LiveServer, mocker: MockerFixture):
     mocker.patch("adit.dicom_web.views.stow_store", return_value=DicomServer(name="ORTHANC1"))
     mocker.patch("adit.dicom_web.views.WebDicomAPIView._get_dicom_server", return_value=[])
 
-    _, _, token = admin_with_group_and_token
-
-    client = AditClient(live_server, token)
+    _, _, token = create_admin_with_group_and_token()
+    client = AditClient(live_server.url, token)
 
     result = client.store_instances("ORTHANC1", [])
     assert len(result.FailedSOPSequence) == 0
