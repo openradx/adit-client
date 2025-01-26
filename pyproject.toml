@@ -14,8 +14,8 @@ pydicom = "^2.4.3"
 python = ">=3.12,<4.0"
 
 [tool.poetry.group.dev.dependencies]
-adit = { git = "https://github.com/openradx/adit.git", tag = "0.37.1" }
-adit-radis-shared = { git = "https://github.com/openradx/adit-radis-shared.git", tag = "0.11.0" }
+adit = { git = "https://github.com/openradx/adit.git", tag = "0.38.0" }
+adit-radis-shared = { git = "https://github.com/openradx/adit-radis-shared.git", tag = "0.13.1" }
 factory-boy = "^3.3.1"
 invoke = "^2.2.0"
 ipykernel = "^6.29.0"
@@ -54,6 +54,7 @@ env = [
     "DJANGO_CSRF_TRUSTED_ORIGINS=localhost",
     "DJANGO_EMAIL_URL=smtp://adit@localhost",
     "DJANGO_SECRET_KEY=dummy",
+    "DJANGO_SECURE_SSL_REDIRECT=false",
     "DJANGO_SERVER_EMAIL=adit@localhost",
     "DJANGO_STATIC_ROOT=.",
     "FILE_TRANSMIT_HOST=receiver.local",
@@ -70,7 +71,6 @@ env = [
     "RECEIVER_AE_TITLE=ADIT",
     "SITE_DOMAIN=localhost",
     "SITE_NAME=ADIT",
-    "SITE_USES_HTTPS=false",
     "STORE_SCP_HOST=receiver.local",
     "STORE_SCP_PORT=11112",
     "SUPERUSER_AUTH_TOKEN=dummy",
