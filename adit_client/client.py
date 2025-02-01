@@ -49,79 +49,111 @@ class AditClient:
         return [Dataset.from_json(result) for result in results]
 
     def search_for_series(
-        self, ae_title: str, study_instance_uid: str, query: dict[str, str] | None = None
+        self, ae_title: str, study_uid: str, query: dict[str, str] | None = None
     ) -> list[Dataset]:
         """Search for series."""
         results = self._create_dicom_web_client(ae_title).search_for_series(
-            study_instance_uid, search_filters=query
+            study_uid, search_filters=query
+        )
+        return [Dataset.from_json(result) for result in results]
+
+    def search_for_images(
+        self,
+        ae_title: str,
+        study_uid: str,
+        series_uid: str,
+        query: dict[str, str] | None = None,
+    ) -> list[Dataset]:
+        """Search for images."""
+        results = self._create_dicom_web_client(ae_title).search_for_instances(
+            study_uid, series_uid, search_filters=query
         )
         return [Dataset.from_json(result) for result in results]
 
     def retrieve_study(
-        self, ae_title: str, study_instance_uid: str, pseudonym: str | None = None
+        self, ae_title: str, study_uid: str, pseudonym: str | None = None
     ) -> list[Dataset]:
         """Retrieve all instances of a study."""
-        instances = self._create_dicom_web_client(ae_title).retrieve_study(study_instance_uid)
+        images = self._create_dicom_web_client(ae_title).retrieve_study(study_uid)
 
         anonymizer: Anonymizer | None = None
         if pseudonym is not None:
             anonymizer = self._setup_anonymizer()
 
-        return [self._handle_dataset(instance, anonymizer, pseudonym) for instance in instances]
+        return [self._handle_dataset(image, anonymizer, pseudonym) for image in images]
 
     def iter_study(
-        self, ae_title: str, study_instance_uid: str, pseudonym: str | None = None
+        self, ae_title: str, study_uid: str, pseudonym: str | None = None
     ) -> Iterator[Dataset]:
         """Iterate over all instances of a study."""
-        instances = self._create_dicom_web_client(ae_title).iter_study(study_instance_uid)
+        images = self._create_dicom_web_client(ae_title).iter_study(study_uid)
 
         anonymizer: Anonymizer | None = None
         if pseudonym is not None:
             anonymizer = self._setup_anonymizer()
 
-        for instance in instances:
-            yield self._handle_dataset(instance, anonymizer, pseudonym)
+        for image in images:
+            yield self._handle_dataset(image, anonymizer, pseudonym)
 
     def retrieve_series(
         self,
         ae_title: str,
-        study_instance_uid: str,
-        series_instance_uid: str,
+        study_uid: str,
+        series_uid: str,
         pseudonym: str | None = None,
     ) -> list[Dataset]:
         """Retrieve all instances of a series."""
-        instances = self._create_dicom_web_client(ae_title).retrieve_series(
-            study_instance_uid, series_instance_uid=series_instance_uid
+        images = self._create_dicom_web_client(ae_title).retrieve_series(
+            study_uid, series_instance_uid=series_uid
         )
 
         anonymizer: Anonymizer | None = None
         if pseudonym is not None:
             anonymizer = self._setup_anonymizer()
 
-        return [self._handle_dataset(instance, anonymizer, pseudonym) for instance in instances]
+        return [self._handle_dataset(image, anonymizer, pseudonym) for image in images]
 
     def iter_series(
         self,
         ae_title: str,
-        study_instance_uid: str,
-        series_instance_uid: str,
+        study_uid: str,
+        series_uid: str,
         pseudonym: str | None = None,
     ) -> Iterator[Dataset]:
         """Iterate over all instances of a series."""
-        instances = self._create_dicom_web_client(ae_title).iter_series(
-            study_instance_uid, series_instance_uid=series_instance_uid
+        images = self._create_dicom_web_client(ae_title).iter_series(
+            study_uid, series_instance_uid=series_uid
         )
 
         anonymizer: Anonymizer | None = None
         if pseudonym is not None:
             anonymizer = self._setup_anonymizer()
 
-        for instance in instances:
-            yield self._handle_dataset(instance, anonymizer, pseudonym)
+        for image in images:
+            yield self._handle_dataset(image, anonymizer, pseudonym)
 
-    def store_instances(self, ae_title: str, instances: list[Dataset]) -> Dataset:
-        """Store instances."""
-        return self._create_dicom_web_client(ae_title).store_instances(instances)
+    def retrieve_image(
+        self,
+        ae_title: str,
+        study_uid: str,
+        series_uid: str,
+        image_uid: str,
+        pseudonym: str | None = None,
+    ) -> Dataset:
+        """Retrieve an image."""
+        image = self._create_dicom_web_client(ae_title).retrieve_instance(
+            study_uid, series_uid, image_uid
+        )
+
+        anonymizer: Anonymizer | None = None
+        if pseudonym is not None:
+            anonymizer = self._setup_anonymizer()
+
+        return self._handle_dataset(image, anonymizer, pseudonym)
+
+    def store_images(self, ae_title: str, images: list[Dataset]) -> Dataset:
+        """Store images."""
+        return self._create_dicom_web_client(ae_title).store_instances(images)
 
     def _create_dicom_web_client(self, ae_title: str) -> DICOMwebClient:
         session = session_utils.create_session()
