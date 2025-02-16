@@ -19,12 +19,12 @@
       "allowedVersions": "<=3.12"
     },
     {
-      "matchManagers": ["poetry"],
+      "matchManagers": ["pep621"],
       "matchPackageNames": ["pydicom"],
       "allowedVersions": "<=2"
     },
     {
-      "matchManagers": ["poetry"],
+      "matchManagers": ["pep621"],
       "matchPackageNames": ["dicognito"],
       "allowedVersions": "<=0.17"
     }
