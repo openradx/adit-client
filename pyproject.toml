@@ -12,7 +12,7 @@ dependencies = ["dicognito<0.18.0", "dicomweb-client", "pydicom<3.0.0"]
 dev = [
     "adit @ git+https://github.com/openradx/adit.git@0.39.4",
     "adit-radis-shared @ git+https://github.com/openradx/adit-radis-shared.git@0.14.0",
-    "factory-boy<=3.3.2",
+    "factory-boy<=3.3.3",
     "ipykernel",
     "ipython",
     "pyright",
