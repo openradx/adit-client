@@ -1,5 +1,8 @@
 # ADIT Client
 
+> [!IMPORTANT]
+> Key information users need to know to achieve their goal.
+
 ## About
 
 ADIT Client is the official Python client of [ADIT (Automated DICOM Transfer)](https://github.com/openradx/adit).
